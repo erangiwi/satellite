@@ -14,13 +14,16 @@ phases:
     commands:
       - echo Entered the pre_build phase...
       - echo Logging in to Amazon EKS...
-      - aws eks update-kubeconfig --name satellite-service
+      - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $AWS_CLUSTER_NAME
   build:
     commands:
       - echo Entered the build phase...
+      - echo Change directory to secondary source
+      - cd $CODEBUILD_SRC_DIR
       - echo List directory
       - ls -la
       - echo Push the latest image to cluster
+      - kubectl config set-context --current --namespace
       - kubectl apply -f satelliteapp-deployment.yaml
       - kubectl apply -f satelliteapp-service.yaml
       #- ./script.sh
